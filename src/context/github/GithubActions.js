@@ -23,3 +23,32 @@ export const searchUsers = async (userName) => {
 
   return items;
 };
+
+export const getUserAndRepos = async (userName) => {
+  try {
+    const params = new URLSearchParams({
+      per_page: 10,
+      sort: "created_at",
+    });
+
+    let userPromise = fetchJSON(
+      `${GITHUB_URL}/users/${userName}`,
+      requestOptions
+    );
+
+    let reposPromise = fetchJSON(
+      `${GITHUB_URL}/users/${userName}/repos?${params}`,
+      requestOptions
+    );
+
+    let promises = [userPromise, reposPromise];
+
+    const results = Promise.all(promises).then((response) => {
+      return response;
+    });
+
+    return results;
+  } catch (error) {
+    console.log(error.message);
+  }
+};

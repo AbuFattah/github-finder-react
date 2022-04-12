@@ -6,8 +6,7 @@ import { Navigate } from "react-router-dom";
 
 const SearchUser = () => {
   const [alert, setAlert] = useState({ message: "", type: "" });
-  const { dispatch, handleSearchChange, searchTerm, clearUsers, users } =
-    useGithub();
+  const { dispatch, handleSearchChange, searchTerm, users } = useGithub();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +52,10 @@ const SearchUser = () => {
         </button>
       </form>
       {users.length > 0 && (
-        <button onClick={clearUsers} className="btn mt-4">
+        <button
+          onClick={() => dispatch({ type: "CLEAR_USERS" })}
+          className="btn mt-4"
+        >
           Clear
         </button>
       )}

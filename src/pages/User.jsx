@@ -1,12 +1,13 @@
 import { FaCodepen, FaStore, FaUserFriends, FaUser } from "react-icons/fa";
 import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { useGithub } from "../context/github/GithubContext";
 import Loading from "../components/Loading/Loading";
 import RepoList from "../components/repos/RepoList";
+import { getUserAndRepos } from "../context/github/GithubActions";
 const User = () => {
   const { login } = useParams();
-  const { getUser, user, loading, repos } = useGithub();
+  const { dispatch, user, loading, repos } = useGithub();
 
   const {
     avatar_url,
@@ -25,11 +26,23 @@ const User = () => {
   } = user;
 
   useEffect(() => {
-    getUser(login);
+    const getUserAndReposData = async () => {
+      try {
+        dispatch({ type: "SET_LOADING" });
+        const [user, repos] = await getUserAndRepos(login);
+        dispatch({ type: "GET_USERS_AND_REPOS", payload: { user, repos } });
+      } catch {
+        <Navigate to="/notfound" />;
+      }
+    };
+
+    getUserAndReposData();
   }, []);
+
   if (loading) {
     return <Loading />;
   }
+
   return (
     <div>
       <div className="w-full lg:w-10/12  mx-auto">
