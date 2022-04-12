@@ -1,22 +1,34 @@
 import React, { useState } from "react";
 import { useGithub } from "../../context/github/GithubContext";
+import Alert from "../Alert/Alert";
 
 const SearchUser = () => {
-  // const [searchTerm, setSearchTerm] = useState("");
+  const [alert, setAlert] = useState({ message: "", type: "" });
+  const [timeoutId, setTimeoutId] = useState("");
   const { fetchUsers, handleSearchChange, searchTerm, clearUsers, users } =
     useGithub();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm === "") return;
+    setAlert(null);
+
+    if (searchTerm === "") {
+      setAlert({ message: "Please enter something", type: "error" });
+      // clearTimeout(timeoutId);
+      // let timeout = setTimeout(() => setAlert(null), 3000);
+      // setTimeoutId(timeout);
+      return;
+    }
     fetchUsers(searchTerm);
   };
   return (
     <>
+      <Alert alert={alert}></Alert>
       <form onSubmit={handleSubmit} className=" flex w-1/2">
         <input
           value={searchTerm}
           onChange={handleSearchChange}
+          onFocus={() => setAlert(null)}
           className="flex-1 rounded-tl-md rounded-bl-md input min-w-[200px] bg-white rounded-none text-black text-lg"
           type="text"
           placeholder="Search Users"
