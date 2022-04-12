@@ -4,7 +4,6 @@ import Alert from "../Alert/Alert";
 
 const SearchUser = () => {
   const [alert, setAlert] = useState({ message: "", type: "" });
-  const [timeoutId, setTimeoutId] = useState("");
   const { fetchUsers, handleSearchChange, searchTerm, clearUsers, users } =
     useGithub();
 
@@ -14,9 +13,6 @@ const SearchUser = () => {
 
     if (searchTerm === "") {
       setAlert({ message: "Please enter something", type: "error" });
-      // clearTimeout(timeoutId);
-      // let timeout = setTimeout(() => setAlert(null), 3000);
-      // setTimeoutId(timeout);
       return;
     }
     fetchUsers(searchTerm);
