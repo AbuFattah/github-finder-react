@@ -105,21 +105,17 @@ export const GithubProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING" });
   }
 
-  useEffect(() => {
-    if (state.searchTerm === "") return;
-    const timeoutId = setTimeout(searchUsers.bind(null, state.searchTerm), 600);
-    return () => clearTimeout(timeoutId);
-  }, [state.searchTerm]);
+  // useEffect(() => {
+  //   if (state.searchTerm === "") return;
+  //   const timeoutId = setTimeout(searchUsers.bind(null, state.searchTerm), 600);
+  //   return () => clearTimeout(timeoutId);
+  // }, [state.searchTerm]);
 
   return (
     <GithubContext.Provider
       value={{
-        searchTerm: state.searchTerm,
-        users: state.users,
-        user: state.user,
-        loading: state.loading,
-        repos: state.repos,
-        fetchUsers: searchUsers,
+        ...state,
+        dispatch,
         getUser,
         handleSearchChange,
         clearUsers,

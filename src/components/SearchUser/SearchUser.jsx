@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGithub } from "../../context/github/GithubContext";
 import Alert from "../Alert/Alert";
+import { searchUsers } from "../../context/github/GithubActions";
+import { Navigate } from "react-router-dom";
 
 const SearchUser = () => {
   const [alert, setAlert] = useState({ message: "", type: "" });
-  const { fetchUsers, handleSearchChange, searchTerm, clearUsers, users } =
+  const { dispatch, handleSearchChange, searchTerm, clearUsers, users } =
     useGithub();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setAlert(null);
 
@@ -15,8 +17,25 @@ const SearchUser = () => {
       setAlert({ message: "Please enter something", type: "error" });
       return;
     }
-    fetchUsers(searchTerm);
+    try {
+      dispatch({ type: "SET_LOADING" });
+      const users = await searchUsers(searchTerm);
+      dispatch({ type: "GET_USERS", payload: users });
+    } catch {
+      <Navigate to="/notfound" />;
+    }
   };
+
+  useEffect(() => {
+    if (searchTerm === "") return;
+    const timeoutId = setTimeout(async () => {
+      dispatch({ type: "SET_LOADING" });
+      const users = await searchUsers(searchTerm);
+      dispatch({ type: "GET_USERS", payload: users });
+    }, 600);
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
   return (
     <>
       <Alert alert={alert}></Alert>
