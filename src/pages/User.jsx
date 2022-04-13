@@ -29,7 +29,7 @@ const User = () => {
     const getUserAndReposData = async () => {
       try {
         dispatch({ type: "SET_LOADING" });
-        const [user, repos] = await getUserAndRepos(login);
+        const { user, repos } = await getUserAndRepos(login);
         dispatch({ type: "GET_USERS_AND_REPOS", payload: { user, repos } });
       } catch {
         <Navigate to="/notfound" />;
@@ -80,16 +80,16 @@ const User = () => {
                 rel="noreferrer"
                 target="_blank"
               >
-                View Reopository
+                View Profile
               </a>
             </div>
 
             <div>
-              <div className="mt-4 stats stats-vertical md:stats-horizontal shadow-xl w-full">
+              <div className="mt-4 stats flex stats-vertical md:stats-horizontal shadow-xl  w-[100%] ">
                 {location && (
                   <div className="stat">
                     <div className="stat-tittle">Location</div>
-                    <div className="stat-value text-lg ">{location}</div>
+                    <div className="stat-value text-lg">{location}</div>
                   </div>
                 )}
                 {blog && (

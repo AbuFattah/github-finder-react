@@ -1,5 +1,14 @@
+import axios from "axios";
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const GITHUB_URL = import.meta.env.VITE_GITHUB_URL;
+
+const github = axios.create({
+  baseURL: GITHUB_URL,
+  headers: {
+    Authorization: `token ${GITHUB_TOKEN}`,
+  },
+});
+
 const requestOptions = {
   method: "GET",
   headers: {
@@ -10,18 +19,9 @@ const requestOptions = {
 export const searchUsers = async (userName) => {
   const params = new URLSearchParams({ q: userName });
 
-  const res = await fetch(
-    `${GITHUB_URL}/search/users?${params}`,
-    requestOptions
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch users");
-  }
-
-  const { items } = await res.json();
-
-  return items;
+  const response = await github.get(`/search/users?${params}`);
+  // in axios response is an object with json data in it
+  return response.data.items;
 };
 
 export const getUserAndRepos = async (userName) => {
@@ -32,14 +32,10 @@ export const getUserAndRepos = async (userName) => {
     });
 
     const [user, repos] = await Promise.all([
-      fetchJSON(`${GITHUB_URL}/users/${userName}`, requestOptions),
-      fetchJSON(
-        `${GITHUB_URL}/users/${userName}/repos?${params}`,
-        requestOptions
-      ),
+      github.get(`/users/${userName}`),
+      github.get(`/users/${userName}/repos?${params}`),
     ]);
-
-    return [user, repos];
+    return { user: user.data, repos: repos.data };
   } catch (error) {
     console.log(error.message);
   }
