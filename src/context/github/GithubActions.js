@@ -31,23 +31,15 @@ export const getUserAndRepos = async (userName) => {
       sort: "created_at",
     });
 
-    let userPromise = fetchJSON(
-      `${GITHUB_URL}/users/${userName}`,
-      requestOptions
-    );
+    const [user, repos] = await Promise.all([
+      fetchJSON(`${GITHUB_URL}/users/${userName}`, requestOptions),
+      fetchJSON(
+        `${GITHUB_URL}/users/${userName}/repos?${params}`,
+        requestOptions
+      ),
+    ]);
 
-    let reposPromise = fetchJSON(
-      `${GITHUB_URL}/users/${userName}/repos?${params}`,
-      requestOptions
-    );
-
-    let promises = [userPromise, reposPromise];
-
-    const results = Promise.all(promises).then((response) => {
-      return response;
-    });
-
-    return results;
+    return [user, repos];
   } catch (error) {
     console.log(error.message);
   }
